@@ -1,0 +1,362 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0 auto;
+    color: #3f464d;
+    font-family: 'Spoqa Han Sans Neo', 'Sans-serif'; 
+}
+
+a {
+    all: unset;
+}
+
+a:link {
+    text-decoration: none;
+    color: #3f464d;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #3f464d;
+}
+
+a:active {
+    text-decoration: none;
+    color: #3f464d;
+  }
+
+a:hover{
+    text-decoration: none;
+    color: #3f464d;
+}
+
+.inner{
+    width:100%;
+    height:100%;
+    margin: 0 auto;
+    padding: 2em 2rem;
+    overflow: hidden;
+}
+
+header{
+    width: 100%;
+    height:60px;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; 
+}
+
+.head-container{
+    width: 100%;
+    height:100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.head-container .head-brand {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .head-container .head-brand a:hover {
+    color: #2186c4;
+    cursor: pointer;
+  }
+  
+  /* 필요시 세부 설정을 위해, 상단 우측 메뉴만을 별도로 클래스로 정의 */
+  .head-container .head-blog {
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .head-container .head-blog a:hover {
+    color: #2186c4; 
+    cursor: pointer;
+  }
+section{
+    width: 100%;
+    background-color: #fff;
+    position: relative;
+}
+
+
+.main{
+    height: 360px;
+    background-image: url("https://media-cdn.tripadvisor.com/media/photo-s/17/aa/5c/77/201812.jpg");
+    background-size: cover;
+    background-position: center 30%; /* 이미지 위치를 살짝 위로 올리기 위한 position 설정 */
+    background-repeat: no-repeat;
+    z-index: 1;
+}
+
+.main-container{
+    width: 100%;
+    height: 100%;
+    background-color: rgb(47, 48, 69);
+    opacity: 0.8;
+    z-index: 2;
+    margin-top: 60px;
+}
+
+.title-container{
+    padding-top: 50px;
+    padding-bottom: 100px;
+}
+
+.title{
+    font-size: 2rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 1em;
+    z-index: 2;
+    padding-left: auto ;
+}
+.message{
+    font-size: 1.4rem;
+    font-weight: normal;
+    color: #fff;
+    line-height: 2.5rem;
+    z-index: 2;
+}
+
+.skill-container{
+    width: 100%;
+    height:100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.skill{
+    width: 25%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    border-radius: 9px;
+    padding: 0.5rem 1rem;
+    margin: 0 1rem;
+    box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
+}
+
+.skill-name:hover{
+    color: #0b77e4;
+}
+
+.skill:hover {
+    box-shadow: 10px 10px 10px 0px rgba(25, 42, 70, 0.2);
+    transform: translate(0, -5px);
+    transition-duration: 1s;
+    cursor: pointer;
+  }
+
+.skill-icon{
+    font-size:2.5rem;
+    margin: 10px;
+    
+}
+
+.python-style{
+    color:#2186c4;
+
+}
+
+.analysis-style{
+    color:#ff8096;
+}
+
+.ai-style {
+    color: #0bdc6d;
+  }
+  
+.js-style {
+    color: #f7df1e;
+  }
+
+.skill-title{
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+}
+
+.skill-name{
+    font-weight: bold;
+    color: #545e6f;
+    margin-bottom: 0.2rem;
+}
+
+.skll-usage{
+    font-size:0.9rem;
+    color: #545e6f;
+}
+
+.roadmap-container{
+    width: 100%;
+    margin-top: 2rem;
+}
+
+.roadmap-title-container{
+    width: 100%;
+    display: flex;
+    padding: 0.5rem 1rem;
+    margin: 0 2.2rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.roadmap-title{
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #54536f;
+}
+
+.slide-prev {
+    font-size: 2rem;
+    cursor: pointer;
+    color: rgb(47, 48, 89);
+  }
+  
+  .slide-next {
+    font-size: 2rem;
+    cursor: pointer;
+    color: #cfd8dc;
+  }
+
+.arrow-container{
+    display: flex;
+}
+
+.class-list{
+    display: flex;
+    list-style: none;
+    padding: 32px;
+}
+
+.class-card{
+    width: 240px;
+    box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
+    border-radius: 8px ;
+    margin: 0 10px;
+    
+}
+
+.class-card:hover {
+    box-shadow: 10px 10px 10px 0px rgba(25, 42, 70, 0.2);
+    transform: translate(0, -5px);
+    transition-duration: 1s;
+  }
+
+.class-image{
+    max-width: 240px;
+     /* border-radius: 블럭 모서리를 둥글게 하는 CSS 기능
+     top-left | top-right | bottom-right | bottom-left */
+    border-radius: 8px 8px 0 0;
+    box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
+}
+
+.class-image:hover{
+    cursor: pointer;
+}
+
+
+.class-container{
+    width:100%;
+    padding: 0.5rem 1rem 1rem 1rem;
+    cursor: pointer;
+}
+
+.class-skill{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.class-type{
+    font-size: 0.9rem;
+    color: #949393;
+
+}
+.class-format{
+    font-size: 0.9rem;
+    color: #fff;
+    background-color: #0d47a1;
+    padding: 0.2rem;
+}
+.class-title{
+    font-weight: bold;
+    font-size:1rem;
+    color: #000;
+    padding-top:1rem;
+
+}
+
+.class-title:hover{
+    text-decoration: none;
+    color: #0b77e4;
+}
+
+.class-detail{
+    font-size: 0.8rem;
+    line-height: 1.3rem;
+    color:#c1c6cb;
+    padding-top: 0.8rem;
+}
+
+#backtotop{
+    background-color: rgb(47,48,49);
+    width: 40px;
+    height:40px;
+    text-align: center;
+
+    border-radius: 20px;
+    position: fixed;
+    bottom: 30px;
+    right:30px;
+    transition-property: background-color, opacity, visibility;
+    transition-duration: 0.3s, 0.5s, 0.5s;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 999;
+}
+
+/* 아이콘 적용방법
+    1. ::after (요소 뒤에 content 추가) 가상 요소에서,
+    2. content: "fontawsome"유니코드 넣고,
+    3. font-family: FontAwesome 이라고 넣으면 됨.
+*/
+#backtotop::after{
+    content: "\f077";
+    font-family: FontAwesome;
+    font-size:  1.5rem;
+    line-height: 40px;
+    color: #fff;
+}
+
+#backtotop.show{
+    opacity: 1;
+    visibility: visible;
+    background-color: rgb(47,48,49);
+}
+
+#backtotop.show:hover{
+    cursor: pointer;
+    background-color: #2186c4;
+
+}
+
+
+@media only screen and (min-width:1200px){
+    .inner{
+        max-width: 1200px;
+    }
+}
+
+@media only screen and (max-width:980px){
+    .skill-container{
+        display: none;
+    }
+}
