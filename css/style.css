@@ -7,6 +7,21 @@ body{
     color: #3f464d;
     font-family: 'Spoqa Han Sans Neo', 'Sans-serif'; 
 }
+/* 태블릿 화면 (최대 너비 768px) */
+@media only screen and (max-width: 768px) {
+    body {
+        font-size: 14px;
+        margin: 10px;
+    }
+}
+
+/* 모바일 화면 (최대 너비 480px) */
+@media only screen and (max-width: 480px) {
+    body {
+        font-size: 12px;
+        margin: 5px;
+    }
+}
 
 a {
     all: unset;
@@ -358,5 +373,102 @@ section{
 @media only screen and (max-width:980px){
     .skill-container{
         display: none;
+    }
+}
+
+/* Mobile styles */
+@media only screen and (min-width:200px) and (max-width:480px) {
+    /* Adjust header */
+    .title-container{
+        
+        margin-top: 60px;
+        padding-bottom: 100px;
+    }
+
+
+    .head-container{
+        justify-content: space-between;
+    }
+    .inner{
+        align-items: center;
+        font-size: 0.85rem;
+    }
+
+    .skill{
+        width:24rem;
+        display: center;
+    }
+
+    .roadmap-title{
+        align-items: center;
+    }
+
+    .arrow-container{
+        visibility: hidden;
+    }
+
+    .head-container{
+        width: 100%;
+        height:100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .head-brand, .head-blog {
+        margin-bottom: 10px;
+    }
+
+    /* Main image section */
+    .main-container .title-container {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .main-container .title {
+        font-size: 1.8rem;
+    }
+
+    .message {
+        font-size: 1rem;
+        padding: 10px;
+    }
+
+    /* Skills section */
+    .skill-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .skill {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    /* Roadmap section */
+    .roadmap-container {
+        text-align: center;
+    }
+
+    .roadmap-title-container {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0px;
+    }
+
+    .class-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .class-card {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
     }
 }
