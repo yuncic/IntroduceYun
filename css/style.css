@@ -462,6 +462,14 @@ section{
         align-items: center;
     }
 
+    .class-image{
+        max-width: 225px;
+         /* border-radius: 블럭 모서리를 둥글게 하는 CSS 기능
+         top-left | top-right | bottom-right | bottom-left */
+        border-radius: 8px 8px 0 0;
+        box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
+    }
+
     .class-card {
         width: 90%;
         margin-bottom: 20px;
