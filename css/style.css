@@ -378,13 +378,19 @@ section{
 
 /* Mobile styles */
 @media only screen and (min-width:200px) and (max-width:480px) {
-    /* Adjust header */
-    .title-container{
-        
-        margin-top: 60px;
-        padding-bottom: 100px;
+    @media (max-width: 768px) {
+        .title {
+            font-size: 1.5rem !important;
+        }
     }
+    /* Adjust header */
 
+    .title-container{       
+        margin-top: 0.5px;
+        padding-bottom: 100px;
+        margin-right:auto;
+
+    }
 
     .head-container{
         justify-content: space-between;
@@ -392,6 +398,7 @@ section{
     .inner{
         align-items: center;
         font-size: 0.85rem;
+        padding:20px;
     }
 
     .skill{
@@ -417,9 +424,9 @@ section{
     .head-brand, .head-blog {
         margin-bottom: 10px;
     }
-
+  
     /* Main image section */
-    .main-container .title-container {
+    .main-container{
         padding: 10px;
         text-align: center;
     }
@@ -429,9 +436,18 @@ section{
     }
 
     .message {
-        font-size: 1rem;
+        font-size: 0.7rem;
         padding: 10px;
     }
+
+    .class-image{
+        max-width: 100%;
+         /* border-radius: 블럭 모서리를 둥글게 하는 CSS 기능
+         top-left | top-right | bottom-right | bottom-left */
+        border-radius: 8px 8px 0 0;
+        box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
+    }
+    
 
     /* Skills section */
     .skill-container {
@@ -460,14 +476,6 @@ section{
         display: flex;
         flex-direction: column;
         align-items: center;
-    }
-
-    .class-image{
-        max-width: 100%;
-         /* border-radius: 블럭 모서리를 둥글게 하는 CSS 기능
-         top-left | top-right | bottom-right | bottom-left */
-        border-radius: 8px 8px 0 0;
-        box-shadow: 10px 10px 10px -5px rgba(25, 42, 70, 0.2);
     }
 
     .class-card {
