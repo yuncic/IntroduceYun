@@ -20,6 +20,7 @@
             border: 1px solid white;
             max-width: 100%;
             max-height: 100vh;
+            object-fit: contain;
         }
         #mobileControls {
             position: absolute;
@@ -36,11 +37,19 @@
             font-size: 20px;
             border-radius: 5px;
         }
+        @media (max-width: 600px) {
+            #gameCanvas {
+                width: 100%;
+                height: auto;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="gameContainer" style="position: relative;">
         <canvas id="gameCanvas"></canvas>
+        <button id="startButton" style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); padding: 15px 30px; font-size: 24px; display: none;">게임 시작</button>
+        <button id="restartButton" style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); padding: 10px 20px; font-size: 20px; display: none;">다시 시작</button>
         <button id="exitBtn" style="position: absolute; bottom: 10px; right: 10px; display: none; padding: 10px; font-size: 16px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">대기창으로 나가기</button>
     </div>
     <div id="mobileControls">
@@ -56,7 +65,7 @@
             await pyodide.runPythonAsync(`
                 import js
                 import numpy as np
-                from pyodide.ffi import create_proxy
+                from pyodide.ffi import create_proxy, to_js
                 import random
                 import json
 
@@ -84,9 +93,9 @@
                 ]
 
                 # 게임 설정
-                GRID_WIDTH = 10
-                GRID_HEIGHT = 20
-                BLOCK_SIZE = 30
+                GRID_WIDTH = 12  # 10에서 12로 증가
+                GRID_HEIGHT = 22  # 20에서 22로 증가
+                BLOCK_SIZE = 35  # 30에서 35로 증가
 
                 # 게임 영역 크기 계산
                 GAME_WIDTH = GRID_WIDTH * BLOCK_SIZE
@@ -146,16 +155,16 @@
                         window_width = js.window.innerWidth
                         window_height = js.window.innerHeight
                         
-                        if window_width < 500 or window_height < 700:  # 모바일 환경으로 간주
+                        if window_width < 600 or window_height < 800:  # 모바일 환경으로 간주하는 기준을 조금 높임
                             BLOCK_SIZE = min(window_width // (GRID_WIDTH + 2), window_height // (GRID_HEIGHT + 4))
                             js.document.getElementById('mobileControls').style.display = 'flex'
                         else:
-                            BLOCK_SIZE = 30
+                            BLOCK_SIZE = 35
                             js.document.getElementById('mobileControls').style.display = 'none'
                         
                         GAME_WIDTH = GRID_WIDTH * BLOCK_SIZE
                         GAME_HEIGHT = GRID_HEIGHT * BLOCK_SIZE
-                        SCREEN_WIDTH = GAME_WIDTH + 8 * BLOCK_SIZE  # 오른쪽 여백을 조금 더 늘림
+                        SCREEN_WIDTH = GAME_WIDTH + 8 * BLOCK_SIZE
                         SCREEN_HEIGHT = GAME_HEIGHT + 2 * BLOCK_SIZE
                         
                         self.canvas.width = SCREEN_WIDTH
@@ -200,7 +209,7 @@
                                 self.high_score = self.score
                                 self.save_high_score()
                             self.combo += 1
-                            self.update_speed_level()
+                            self.update_speed_level()  # 여기서 속도 레벨 업데이트
                         else:
                             self.combo = 0
 
@@ -212,7 +221,10 @@
                             self.particles.append(Particle(x, y, color))
 
                     def update_speed_level(self):
-                        self.speed_level = min(10, self.score // 20 + 1)
+                        new_level = min(10, self.score // 30 + 1)
+                        if new_level != self.speed_level:
+                            self.speed_level = new_level
+                            print(f"속도 레벨이 {self.speed_level}로 증가했습니다!")  # 디버깅용 메시지
 
                     def rotate_piece(self):
                         new_shape = list(zip(*self.current_piece["shape"][::-1]))
@@ -286,18 +298,13 @@
                         self.ctx.textAlign = 'center'
                         self.ctx.fillText('테트리스', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - BLOCK_SIZE * 3)
                         
-                        # 최고 점수 표시
-                        self.ctx.font = f'{BLOCK_SIZE * 0.7}px Arial'
+                        # 최고 점 텍스트 크기 증가
+                        self.ctx.font = f'bold {BLOCK_SIZE * 0.9}px Arial'
                         self.ctx.fillText(f'최고 점수: {self.high_score}', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - BLOCK_SIZE)
                         
-                        self.ctx.fillStyle = 'green'
-                        self.ctx.fillRect(SCREEN_WIDTH // 2 - BLOCK_SIZE * 3, SCREEN_HEIGHT // 2, BLOCK_SIZE * 6, BLOCK_SIZE * 1.5)
-                        self.ctx.fillStyle = 'white'
-                        self.ctx.font = f'bold {BLOCK_SIZE * 0.7}px Arial'
-                        self.ctx.fillText('게임 시작', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + BLOCK_SIZE * 0.8)
-                        
-                        self.exit_btn.style.display = 'none'
-                        self.ctx.textAlign = 'left'  # 텍스트 정렬을 다시 왼쪽으로 설정
+                        js.document.getElementById('startButton').style.display = 'block'
+                        js.document.getElementById('exitBtn').style.display = 'none'
+                        self.ctx.textAlign = 'left'
 
                     def draw_game_over(self):
                         self.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)'
@@ -312,14 +319,9 @@
                         self.ctx.fillText(f'현재 점수: {self.score}', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
                         self.ctx.fillText(f'최고 점수: {self.high_score}', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + BLOCK_SIZE)
                         
-                        self.ctx.fillStyle = 'green'
-                        self.ctx.fillRect(SCREEN_WIDTH // 2 - BLOCK_SIZE * 3, SCREEN_HEIGHT // 2 + BLOCK_SIZE * 2, BLOCK_SIZE * 6, BLOCK_SIZE * 1.5)
-                        self.ctx.fillStyle = 'white'
-                        self.ctx.font = f'{BLOCK_SIZE * 0.7}px Arial'
-                        self.ctx.fillText('다시 시작', SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + BLOCK_SIZE * 2.8)
-                        
-                        self.exit_btn.style.display = 'block'
-                        self.ctx.textAlign = 'left'  # 텍스트 정렬을 다시 왼쪽으로 설정
+                        js.document.getElementById('restartButton').style.display = 'block'
+                        js.document.getElementById('exitBtn').style.display = 'block'
+                        self.ctx.textAlign = 'left'
 
                     def update(self, dt):
                         self.fall_time += dt
@@ -351,6 +353,8 @@
                         self.current_piece = self.new_piece()
                         self.update_ghost_piece()
                         self.exit_btn.style.display = 'block'
+                        js.document.getElementById('startButton').style.display = 'none'
+                        js.document.getElementById('restartButton').style.display = 'none'
 
                     def reset_game(self):
                         self.__init__()
@@ -388,12 +392,30 @@
                     if event.key == 'ArrowDown':
                         game.fast_fall = False
 
-                def handle_click(event):
+                def handle_start(event):
+                    canvas = js.document.getElementById('gameCanvas')
+                    rect = canvas.getBoundingClientRect()
+                    
+                    if hasattr(event, 'offsetX'):
+                        x, y = event.offsetX, event.offsetY
+                    else:
+                        # 터치 이벤트 처리
+                        if hasattr(event, 'touches') and event.touches.length > 0:
+                            touch = event.touches.item(0)
+                        elif hasattr(event, 'changedTouches') and event.changedTouches.length > 0:
+                            touch = event.changedTouches.item(0)
+                        else:
+                            return  # 유효한 터치 이벤트가 아님
+                        x = touch.clientX - rect.left
+                        y = touch.clientY - rect.top
+
                     if not game.game_started:
-                        if SCREEN_WIDTH // 2 - BLOCK_SIZE * 3 < event.offsetX < SCREEN_WIDTH // 2 + BLOCK_SIZE * 3 and SCREEN_HEIGHT // 2 < event.offsetY < SCREEN_HEIGHT // 2 + BLOCK_SIZE * 1.5:
+                        if (SCREEN_WIDTH // 2 - BLOCK_SIZE * 4 < x < SCREEN_WIDTH // 2 + BLOCK_SIZE * 4 and 
+                            SCREEN_HEIGHT // 2 < y < SCREEN_HEIGHT // 2 + BLOCK_SIZE * 2):
                             game.start_game()
                     elif game.show_game_over:
-                        if SCREEN_WIDTH // 2 - BLOCK_SIZE * 3 < event.offsetX < SCREEN_WIDTH // 2 + BLOCK_SIZE * 3 and SCREEN_HEIGHT // 2 + BLOCK_SIZE * 2 < event.offsetY < SCREEN_HEIGHT // 2 + BLOCK_SIZE * 3.5:
+                        if (SCREEN_WIDTH // 2 - BLOCK_SIZE * 3 < x < SCREEN_WIDTH // 2 + BLOCK_SIZE * 3 and 
+                            SCREEN_HEIGHT // 2 + BLOCK_SIZE * 2 < y < SCREEN_HEIGHT // 2 + BLOCK_SIZE * 3.5):
                             game.reset_game()
                             game.start_game()
 
@@ -414,9 +436,19 @@
                 def handle_exit(event):
                     game.reset_game()
 
+                def prevent_default(event):
+                    event.preventDefault()
+
+                # 이벤트 리스너 설정
+                handle_start_proxy = create_proxy(handle_start)
+                prevent_default_proxy = create_proxy(prevent_default)
+
                 js.document.addEventListener('keydown', create_proxy(handle_keydown))
                 js.document.addEventListener('keyup', create_proxy(handle_keyup))
-                js.document.getElementById('gameCanvas').addEventListener('click', create_proxy(handle_click))
+                js.document.getElementById('gameCanvas').addEventListener('mousedown', handle_start_proxy)
+                js.document.getElementById('gameCanvas').addEventListener('touchstart', handle_start_proxy)
+                js.document.getElementById('gameCanvas').addEventListener('click', handle_start_proxy)
+                js.document.getElementById('gameCanvas').addEventListener('touchend', handle_start_proxy)
                 js.window.addEventListener('resize', create_proxy(handle_resize))
                 js.document.getElementById('mobileControls').addEventListener('touchstart', create_proxy(handle_mobile_control))
                 js.document.getElementById('mobileControls').addEventListener('touchend', create_proxy(lambda event: setattr(game, 'fast_fall', False)))
@@ -426,9 +458,32 @@
                 js.document.body.addEventListener('touchmove', create_proxy(lambda event: event.preventDefault()), {'passive': False})
 
                 js.requestAnimationFrame(create_proxy(game_loop))
+
+                def start_game_handler(event):
+                    game.start_game()
+
+                def restart_game_handler(event):
+                    game.reset_game()
+                    game.start_game()
+
+                js.document.getElementById('startButton').addEventListener('click', create_proxy(start_game_handler))
+                js.document.getElementById('restartButton').addEventListener('click', create_proxy(restart_game_handler))
             `)
         }
         main();
+    </script>
+    <script>
+        document.body.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.getElementById('gameCanvas').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+
+        document.getElementById('gameCanvas').addEventListener('touchend', function(e) {
+            e.preventDefault();
+        }, { passive: false });
     </script>
 </body>
 </html>
