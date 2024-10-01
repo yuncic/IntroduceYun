@@ -179,7 +179,7 @@
                         window_width = js.window.innerWidth
                         window_height = js.window.innerHeight
                         
-                        if window_width < 600 or window_height < 800:  # 모바일 환경으로 간주하는 기준을 조금 높임
+                        if window_width < 600 or window_height < 800:  # 모바일 환경으로 간주
                             BLOCK_SIZE = min(window_width // (GRID_WIDTH + 2), window_height // (GRID_HEIGHT + 4))
                             js.document.getElementById('mobileControls').style.display = 'flex'
                         else:
@@ -535,6 +535,14 @@
         document.getElementById('gameCanvas').addEventListener('touchend', function(e) {
             e.preventDefault();
         }, { passive: false });
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth < 600 || window.innerHeight < 800) {
+                document.getElementById('mobileControls').style.display = 'flex';
+            } else {
+                document.getElementById('mobileControls').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
