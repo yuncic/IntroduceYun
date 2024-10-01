@@ -31,11 +31,9 @@
             align-items: center;
         }
         .mobileButton {
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: white;  /* 하얀색으로 변경 */
             border: none;
-            color: white;
-            padding: 15px;
-            font-size: 20px;
+            padding: 10px;
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -44,15 +42,18 @@
             align-items: center;
             touch-action: manipulation;
         }
-        .mobileButton svg {
-            width: 30px;
-            height: 30px;
+        .controlArrow {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            pointer-events: none;  /* 이미지가 클릭 이벤트를 방해하지 않도록 함 */
         }
         @media (max-width: 600px) {
             #gameCanvas {
                 width: 100%;
                 height: auto;
             }
+            
             #mobileControls {
                 display: flex;
             }
@@ -68,24 +69,16 @@
     </div>
     <div id="mobileControls">
         <button class="mobileButton" id="leftBtn">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
-            </svg>
+            <img src="img/left_arrow.png" alt="Left" class="controlArrow">
         </button>
         <button class="mobileButton" id="rotateBtn">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-            </svg>
+            <img src="img/arround_arrow.png" alt="Rotate" class="controlArrow">
         </button>
         <button class="mobileButton" id="rightBtn">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-            </svg>
+            <img src="img/right_arrow.png" alt="Right" class="controlArrow">
         </button>
         <button class="mobileButton" id="downBtn">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
-            </svg>
+            <img src="img/down_arrow.png" alt="Down" class="controlArrow">
         </button>
     </div>
     <script>
@@ -98,6 +91,7 @@
                 from pyodide.ffi import create_proxy, to_js
                 import random
                 import json
+                import time
 
                 # 색상 정의
                 BLACK = (0, 0, 0)
@@ -261,7 +255,7 @@
                         if self.valid_move({"shape": new_shape, "x": self.current_piece["x"], "y": self.current_piece["y"]}, self.current_piece["x"], self.current_piece["y"]):
                             self.current_piece["shape"] = new_shape
                             self.update_ghost_piece()
-
+                            
                     def move(self, dx, dy):
                         if self.valid_move(self.current_piece, self.current_piece["x"] + dx, self.current_piece["y"] + dy):
                             self.current_piece["x"] += dx
@@ -452,8 +446,14 @@
                 def handle_resize(event):
                     game.resize_canvas()
 
+                last_rotate_time = 0
+                rotate_cooldown = 0.1  # 0.1초 쿨다운
+
                 def handle_mobile_control(event):
+                    global last_rotate_time
                     button_id = event.target.id
+                    current_time = time.time()
+                    
                     if button_id == 'leftBtn':
                         game.move(-1, 0)
                     elif button_id == 'rightBtn':
@@ -461,7 +461,16 @@
                     elif button_id == 'downBtn':
                         game.fast_fall = True
                     elif button_id == 'rotateBtn':
-                        game.rotate_piece()
+                        if current_time - last_rotate_time > rotate_cooldown:
+                            game.rotate_piece()
+                            last_rotate_time = current_time
+                    
+                    event.preventDefault()
+                    event.stopPropagation()
+
+                def handle_mobile_control_end(event):
+                    if event.target.id == 'downBtn':
+                        game.fast_fall = False
 
                 def handle_exit(event):
                     game.reset_game()
@@ -480,8 +489,18 @@
                 js.document.getElementById('gameCanvas').addEventListener('click', handle_start_proxy)
                 js.document.getElementById('gameCanvas').addEventListener('touchend', handle_start_proxy)
                 js.window.addEventListener('resize', create_proxy(handle_resize))
-                js.document.getElementById('mobileControls').addEventListener('touchstart', create_proxy(handle_mobile_control))
-                js.document.getElementById('mobileControls').addEventListener('touchend', create_proxy(lambda event: setattr(game, 'fast_fall', False)))
+                js.document.getElementById('mobileControls').removeEventListener('touchstart', create_proxy(handle_mobile_control))
+                js.document.getElementById('mobileControls').removeEventListener('touchend', create_proxy(handle_mobile_control_end))
+                js.document.getElementById('mobileControls').removeEventListener('mousedown', create_proxy(handle_mobile_control))
+                js.document.getElementById('mobileControls').removeEventListener('mouseup', create_proxy(handle_mobile_control_end))
+
+                handle_mobile_control_proxy = create_proxy(handle_mobile_control)
+                handle_mobile_control_end_proxy = create_proxy(handle_mobile_control_end)
+
+                js.document.getElementById('mobileControls').addEventListener('touchstart', handle_mobile_control_proxy, {'passive': False})
+                js.document.getElementById('mobileControls').addEventListener('touchend', handle_mobile_control_end_proxy, {'passive': False})
+                js.document.getElementById('mobileControls').addEventListener('mousedown', handle_mobile_control_proxy)
+                js.document.getElementById('mobileControls').addEventListener('mouseup', handle_mobile_control_end_proxy)
                 js.document.getElementById('exitBtn').addEventListener('click', create_proxy(handle_exit))
 
                 # 터치 이벤트 방지
