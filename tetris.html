@@ -248,7 +248,8 @@
                         new_level = min(10, self.score // 30 + 1)
                         if new_level != self.speed_level:
                             self.speed_level = new_level
-                            print(f"속도 레벨이 {self.speed_level}로 증가했습니다!")  # 디버깅용 메시지
+                            self.base_fall_speed = max(0.1, 0.5 - (self.speed_level - 1) * 0.05)  # 속도 증가
+                            print(f"속도 레벨이 {self.speed_level}로 증가했습니다! 현재 낙하 속도: {self.base_fall_speed:.2f}")  # 디버깅용 메시지
 
                     def rotate_piece(self):
                         new_shape = list(zip(*self.current_piece["shape"][::-1]))
@@ -351,7 +352,7 @@
                         self.fall_time += dt
                         if not self.game_over:
                             self.update_ghost_piece()
-                            current_fall_speed = self.fast_fall_speed if self.fast_fall else (self.base_fall_speed - (self.speed_level - 1) * 0.05)
+                            current_fall_speed = self.fast_fall_speed if self.fast_fall else self.base_fall_speed
                             if self.fall_time > current_fall_speed:
                                 self.move(0, 1)
                                 self.fall_time = 0
@@ -373,6 +374,7 @@
                         self.score = 0
                         self.combo = 0
                         self.speed_level = 1
+                        self.base_fall_speed = 0.5
                         self.grid = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
                         self.current_piece = self.new_piece()
                         self.update_ghost_piece()
