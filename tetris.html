@@ -24,10 +24,11 @@
         }
         #mobileControls {
             position: absolute;
-            bottom: 10px;
+            bottom: 20px;
             display: none;
             width: 100%;
             justify-content: space-around;
+            align-items: center;
         }
         .mobileButton {
             background-color: rgba(255, 255, 255, 0.3);
@@ -35,12 +36,25 @@
             color: white;
             padding: 15px;
             font-size: 20px;
-            border-radius: 5px;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+        }
+        .mobileButton svg {
+            width: 30px;
+            height: 30px;
         }
         @media (max-width: 600px) {
             #gameCanvas {
                 width: 100%;
                 height: auto;
+            }
+            #mobileControls {
+                display: flex;
             }
         }
     </style>
@@ -53,10 +67,26 @@
         <button id="exitBtn" style="position: absolute; bottom: 10px; right: 10px; display: none; padding: 10px; font-size: 16px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer;">대기창으로 나가기</button>
     </div>
     <div id="mobileControls">
-        <button class="mobileButton" id="leftBtn">←</button>
-        <button class="mobileButton" id="rotateBtn">↻</button>
-        <button class="mobileButton" id="rightBtn">→</button>
-        <button class="mobileButton" id="downBtn">↓</button>
+        <button class="mobileButton" id="leftBtn">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6 1.41-1.41z"/>
+            </svg>
+        </button>
+        <button class="mobileButton" id="rotateBtn">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+            </svg>
+        </button>
+        <button class="mobileButton" id="rightBtn">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+            </svg>
+        </button>
+        <button class="mobileButton" id="downBtn">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+                <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            </svg>
+        </button>
     </div>
     <script>
         async function main() {
