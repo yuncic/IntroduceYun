@@ -71,11 +71,11 @@
         <button class="mobileButton" id="leftBtn">
             <img src="img/left_arrow.png" alt="Left" class="controlArrow">
         </button>
-        <button class="mobileButton" id="rotateBtn">
-            <img src="img/arround_arrow.png" alt="Rotate" class="controlArrow">
-        </button>
         <button class="mobileButton" id="rightBtn">
             <img src="img/right_arrow.png" alt="Right" class="controlArrow">
+        </button>
+        <button class="mobileButton" id="rotateBtn">
+            <img src="img/arround_arrow.png" alt="Rotate" class="controlArrow">
         </button>
         <button class="mobileButton" id="downBtn">
             <img src="img/down_arrow.png" alt="Down" class="controlArrow">
@@ -99,7 +99,7 @@
                 COLORS = [
                     (255, 204, 204),  # 파스텔 핑크
                     (204, 255, 204),  # 파스텔 그린
-                    (204, 204, 255),  # 파스텔 블루
+                    (204, 204, 255),  # 파스텔 ��
                     (255, 255, 204),  # 파스텔 옐로우
                     (255, 204, 255),  # 파스텔 라벤더
                     (204, 255, 255),  # 파스텔 시안
@@ -157,10 +157,10 @@
                         self.resize_canvas()
                         self.grid = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
                         self.current_piece = self.new_piece()
+                        self.next_piece = self.new_piece()  # 다음 블록 추가
                         self.game_over = False
                         self.show_game_over = False
                         self.score = 0
-                        self.combo = 0
                         self.speed_level = 1
                         self.fall_time = 0
                         self.base_fall_speed = 0.5
@@ -179,7 +179,7 @@
                         window_width = js.window.innerWidth
                         window_height = js.window.innerHeight
                         
-                        if window_width < 600 or window_height < 800:  # 모바일 환경으로 간주
+                        if window_width < 550 or window_height < 740:  # 모바일 환경으로 간주
                             BLOCK_SIZE = min(window_width // (GRID_WIDTH + 2), window_height // (GRID_HEIGHT + 4))
                             js.document.getElementById('mobileControls').style.display = 'flex'
                         else:
@@ -212,8 +212,9 @@
                             for j, cell in enumerate(row):
                                 if cell:
                                     self.grid[self.current_piece["y"] + i][self.current_piece["x"] + j] = self.current_piece["color"]
-                        self.clear_lines()
-                        self.current_piece = self.new_piece()
+                        lines_cleared = self.clear_lines()
+                        self.current_piece = self.next_piece
+                        self.next_piece = self.new_piece()
                         if not self.valid_move(self.current_piece, self.current_piece["x"], self.current_piece["y"]):
                             self.game_over = True
                             self.show_game_over = True
@@ -227,15 +228,13 @@
                                 lines_cleared += 1
                                 self.create_line_clear_effect(i)
                         if lines_cleared:
-                            points = lines_cleared * 10 * (self.combo + 1)
+                            points = self.speed_level * lines_cleared * 10  # 새로운 점수 계산 방식
                             self.score += points
                             if self.score > self.high_score:
                                 self.high_score = self.score
                                 self.save_high_score()
-                            self.combo += 1
-                            self.update_speed_level()  # 여기서 속도 레벨 업데이트
-                        else:
-                            self.combo = 0
+                            self.update_speed_level()  # 점수가 변경되었으므로 속도 레벨 업데이트
+                        return lines_cleared
 
                     def create_line_clear_effect(self, row):
                         for _ in range(50):  # 각 줄마다 50개의 파티클 생성
@@ -245,10 +244,10 @@
                             self.particles.append(Particle(x, y, color))
 
                     def update_speed_level(self):
-                        new_level = min(10, self.score // 30 + 1)
+                        new_level = min(10, self.score // 20 + 1)  # 20점마다 레벨 증가
                         if new_level != self.speed_level:
                             self.speed_level = new_level
-                            self.base_fall_speed = max(0.1, 0.5 - (self.speed_level - 1) * 0.05)  # 속도 증가
+                            self.base_fall_speed = max(0.05, 0.5 - (self.speed_level - 1) * 0.08)  # 속도 증가 폭을 더 크게
                             print(f"속도 레벨이 {self.speed_level}로 증가했습니다! 현재 낙하 속도: {self.base_fall_speed:.2f}")  # 디버깅용 메시지
 
                     def rotate_piece(self):
@@ -307,12 +306,27 @@
                                 if particle.lifetime <= 0:
                                     self.particles.remove(particle)
 
-                            # 점수와 최고 점수 표시 위치 조정 및 폰트 크기 증가
+                            # 다음 블록 그리기
+                            self.draw_next_piece()
+
+                            # 점수와 최고 점수 표시
                             self.ctx.fillStyle = 'white'
-                            self.ctx.font = f'bold {BLOCK_SIZE*0.7}px Arial'  # 폰트 크기를 키움
+                            self.ctx.font = f'bold {BLOCK_SIZE*0.7}px Arial'
                             self.ctx.fillText(f'현재 점수: {self.score}', GAME_WIDTH + BLOCK_SIZE, BLOCK_SIZE * 2)
                             self.ctx.fillText(f'최고 점수: {self.high_score}', GAME_WIDTH + BLOCK_SIZE, BLOCK_SIZE * 3.5)
                             self.ctx.fillText(f'속도: {self.speed_level}', GAME_WIDTH + BLOCK_SIZE, BLOCK_SIZE * 5)
+                            self.ctx.fillText('다음 블록:', GAME_WIDTH + BLOCK_SIZE, BLOCK_SIZE * 6.5)
+
+                    def draw_next_piece(self):
+                        next_piece = self.next_piece
+                        start_x = GAME_WIDTH + BLOCK_SIZE * 2
+                        start_y = BLOCK_SIZE * 7.5
+
+                        self.ctx.fillStyle = f'rgb({next_piece["color"][0]},{next_piece["color"][1]},{next_piece["color"][2]})'
+                        for i, row in enumerate(next_piece["shape"]):
+                            for j, cell in enumerate(row):
+                                if cell:
+                                    self.ctx.fillRect(start_x + j * BLOCK_SIZE, start_y + i * BLOCK_SIZE, BLOCK_SIZE - 1, BLOCK_SIZE - 1)
 
                     def draw_start_screen(self):
                         self.ctx.fillStyle = 'black'
@@ -372,11 +386,11 @@
                         self.game_over = False
                         self.show_game_over = False
                         self.score = 0
-                        self.combo = 0
                         self.speed_level = 1
                         self.base_fall_speed = 0.5
                         self.grid = [[0 for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
                         self.current_piece = self.new_piece()
+                        self.next_piece = self.new_piece()
                         self.update_ghost_piece()
                         self.exit_btn.style.display = 'block'
                         js.document.getElementById('startButton').style.display = 'none'
