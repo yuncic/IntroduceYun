@@ -1,5 +1,5 @@
 # IntroduceYun
-## Introduce web first page
+## First page
 <img width="1470" alt="첫 화면" src="https://github.com/user-attachments/assets/fdf5e241-f90f-4083-898d-8ed033d4a84b">
 
 ## Scroll Down
@@ -12,7 +12,7 @@
 ## Card List
 <img width="994" alt="카드 리스트" src="https://github.com/user-attachments/assets/eddd98df-8b98-492d-ba78-48c509242abd">
 
-## Card List prev, next button with js
+## Card List's prev, next button with js
 <img width="1043" alt="카드 리스트 오른쪽 끝" src="https://github.com/user-attachments/assets/407e935b-4ef4-4beb-8700-2d29f9350cbb">
 
 ## Tetris with Pygame + HTML (Game Start Page)
